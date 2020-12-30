@@ -15,7 +15,7 @@ function Chat() {
 
     const msgsRef = useRef(null);
 
-    const ENDPOINT = "localhost:5000";
+    const ENDPOINT = "https://git.heroku.com/realtimechat-api-nodejs.git";
 
     useEffect(() => {
 
