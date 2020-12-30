@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import io from 'socket.io-client';
-
+import { RiChatSmile2Line } from 'react-icons/ri';
 
 let socket;
 
@@ -13,13 +13,22 @@ function Chat() {
     const [input, setInput] = useState('');
     const [msgs, setMsgs] = useState([]);
 
+    const msgsRef = useRef(null);
+
     const ENDPOINT = "localhost:5000";
 
     useEffect(() => {
 
         socket = io(ENDPOINT);
         socket.on('message', message => {
-            setMsgs(prevMsgs => [...prevMsgs, message])
+            setMsgs(prevMsgs => [...prevMsgs, message]);
+            msgsRef.current.scrollIntoView({ behavior: 'smooth' });
+        })
+
+        socket.emit('getRoomList');
+        socket.on('roomList', rooms => {
+            console.log(rooms)
+            setRoomList(rooms)
         })
 
         return () => {
@@ -28,15 +37,15 @@ function Chat() {
         }
     }, [ENDPOINT])
 
-    useEffect((() => {
-        if (room !== '' && name !== '') socket.emit('joinRoom', { name, room })
-    }), [name])
 
     useEffect((() => {
-        if (room !== '') setRoomList(prevRoomList => [...prevRoomList, room])
-        if (name !== '' && room !== '') socket.emit('joinRoom', { name, room })
-    }), [room])
+        socket.emit('joinRoom', { name, room })
+        socket.emit('getRoomList');
+    }), [name, room])
 
+    // useEffect((() => {
+    //     msgsRef.current.scrollIntoView({ behavior: 'smooth' });
+    // }), [msgsRef]);
 
 
     const handleSend = async (e) => {
@@ -51,32 +60,54 @@ function Chat() {
     console.log(name, room)
 
     return (
-        <div>
-            <div>Current chat room: {room}</div>
-            <div>
-                <p>Messages:</p>
+        <div className="container">
+            <nav><RiChatSmile2Line /></nav>
+            <div className="location" >
+                {room !== '' ? `You are in ${room} now!` : 'Enter your nickname and join a chat room!'}
+            </div>
+            <div className="msgs" ref={msgsRef}>
+
+                {msgs.map(item => {
+                    return (
+                        item.username ? <div ref={msgsRef} key={item.id}>
+                            <span className='msg-time'>{item.time} </span>
+                            <span className='msg-username'>{item.username} </span>
+                            <span className='msg-text'>{item.text}</span>
+                        </div> : <div key={item.id} ref={msgsRef} className='msg-official'>{item.text} </div>
+                    )
+                }
+
+                )}
+
+            </div>
+            <div className="side-bar">
+                <p>Rooms</p>
                 <ul>
-                    {msgs.map(item => <li key={item.id}>{item.time} {item.username} {item.text}</li>)}
+                    {roomList.length ? roomList.map((item, i) => <li key={i}>{item}</li>) : null}
                 </ul>
             </div>
-            <div>
-                <p>Rooms:</p>
-                <ul>
-                    {roomList.map(item => <li key={item}>{item}</li>)}
-                </ul>
+            <div className="user-input">
+                <form onSubmit={handleSend} >
+                    <input
+                        placeholder="Hello..."
+                        type='text'
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                    />
+                    <div className="btn-group">
+                        <button type='reset'>Clear</button>
+                        <button type='submit'>Send</button>
+                    </div>
+                    <div className="explains">
+                        Change nickname: /nick [username] <br />
+                        Join or create chatroom: /join [roomname]
+                    </div>
+                </form>
             </div>
-            <form onSubmit={handleSend}>
-                <input
-                    type='text'
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                />
-                <button type='submit'>Send</button>
-            </form>
-            <div>
-                <p>/nick [username]</p>
-                <p>/join [roomname]</p>
-            </div>
+            <footer>
+                © 2020 - Developed with ❤️ Estella
+            </footer>
+
         </div>
     )
 }

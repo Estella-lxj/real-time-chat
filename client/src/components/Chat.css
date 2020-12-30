@@ -1,34 +1,146 @@
-.outerContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #1a1a1d;
-}
-
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: #ffffff;
-  border-radius: 8px;
-  height: 60%;
-  width: 35%;
+  display: grid;
+  height: 100vh;
+  background-color: #060930;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 0.2fr 2fr 0.5fr 0.2fr;
+  grid-template-areas:
+    "nav nav nav nav"
+    "location location location side-bar"
+    "msgs msgs msgs side-bar"
+    "user-input user-input user-input side-bar"
+    "footer footer footer footer";
 }
 
-@media (min-width: 320px) and (max-width: 480px) {
-  .outerContainer {
-    height: 100%;
-  }
-
-  .container {
-    width: 100%;
-    height: 100%;
-  }
+nav {
+  background-color: #333456;
+  grid-area: nav;
+  font-size: 2rem;
+  font-weight: 300;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  color: #f4abc4;
 }
 
-@media (min-width: 480px) and (max-width: 1200px) {
-  .container {
-    width: 60%;
-  }
+.side-bar {
+  background-color: #060930;
+  grid-area: side-bar;
+  color: rgb(182, 182, 187);
+  padding: 0rem 1rem;
+}
+
+.location {
+  background-color: #060930;
+  grid-area: location;
+  color: rgb(182, 182, 187);
+  border-radius: 0.5rem;
+  padding: 1rem 1rem;
+}
+
+.msgs {
+  background-color: #060930;
+  grid-area: msgs;
+  color: rgb(182, 182, 187);
+  overflow-y: scroll;
+  border: 3px solid #595b83;
+  border-radius: 0.5rem;
+}
+
+.msgs div {
+  margin: 1rem 1rem;
+}
+
+.msg-time {
+  font-size: small;
+}
+
+.msg-username {
+  color: #f4abc4;
+  font-weight: 500;
+}
+
+.msg-text {
+  background-color: #f4abc4;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  color: #060930;
+}
+
+.msg-official {
+  text-align: center;
+  font-size: small;
+}
+
+.user-input {
+  background-color: #060930;
+  grid-area: user-input;
+}
+
+.user-input form {
+  background-color: #060930;
+  position: relative;
+}
+
+.user-input form input {
+  background-color: #333456;
+  border: none;
+  width: 98%;
+  color: rgb(182, 182, 187);
+  margin: 0.5rem 0rem;
+  height: 1.5rem;
+  border: 1px solid #595b83;
+  border-radius: 0.5rem;
+  padding-left: 1rem;
+}
+
+::placeholder {
+  color: rgb(182, 182, 187);
+  font-size: small;
+}
+
+.btn-group {
+  position: absolute;
+  bottom: 0rem;
+  right: 0rem;
+}
+.user-input form button {
+  background-color: #060930;
+  border: none;
+  color: rgb(182, 182, 187);
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #595b83;
+  border-radius: 1rem;
+}
+.explains {
+  background-color: #060930;
+  color: #595b83;
+  padding: 0.1rem 1rem;
+  border: none;
+  font-size: small;
+  margin-top: 0.5rem;
+}
+
+footer {
+  background-color: #060930;
+  grid-area: footer;
+  text-align: center;
+  margin-top: 1rem;
+  color: rgb(182, 182, 187);
+  font-size: small;
+}
+
+.msgs::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+
+.msgs::-webkit-scrollbar-track {
+  background: #060930;
+  border-radius: 0.5rem;
+}
+
+.msgs::-webkit-scrollbar-thumb {
+  background-color: #595b83; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #060930; /* creates padding around scroll thumb */
 }

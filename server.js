@@ -26,9 +26,13 @@ io.on('connection', (socket) => {
     console.log('New connection');
 
     socket.on('joinRoom', ({ name, room }) => {
+
+        if (name === '' && room === '') return socket.emit('message', formatMessage('', 'Welcome!'))
+        if (name !== '' && room === '') return socket.emit('message', formatMessage('', `Hi! ${name} `))
+
         const existingUser = getUser(socket.id)
         const currentUsers = getRoomUsers(room)
-        const roomsList = getRooms();
+
 
         if (existingUser) {
             console.log('existing user prev info', existingUser)
@@ -37,28 +41,37 @@ io.on('connection', (socket) => {
                 socket.emit('message', formatMessage('', `You are now known as ${existingUser.username} `))
             }
             if (existingUser.room !== room) {
-                changeRoom(socket.id, room)
-                socket.emit('message', formatMessage('', 'Room changed!'))
-                socket.join(existingUser.room)
-                socket.emit('message', formatMessage('', `Users current in ${existingUser.room}: ${currentUsers}`))
-                io.to(existingUser.room).emit('message', formatMessage('', `${existingUser.username} joins!`))
+                socket.leave(existingUser.room);
+                changeRoom(socket.id, room);
+                socket.emit('message', formatMessage('', 'Room changed!'));
+                socket.join(existingUser.room);
+                socket.emit('message', formatMessage('', `Users current in ${existingUser.room}: ${currentUsers}`));
+                socket.to(existingUser.room).broadcast.emit('message', formatMessage('', `${existingUser.username} joins!`));
             }
             console.log('existing user new info', existingUser)
         } else {
             const newUser = userJoin(socket.id, name, room)
-            socket.emit('message', formatMessage('', 'Welcome!'))
             console.log('new user', newUser)
             socket.join(newUser.room)
             socket.emit('message', formatMessage('', `Users current in ${newUser.room}: ${currentUsers}`))
-            io.to(newUser.room).emit('message', formatMessage('', `${newUser.username} joins!`))
+            socket.to(newUser.room).broadcast.emit('message', formatMessage('', `${newUser.username} joins!`))
         }
     })
+
+    // get all available roooms
+    socket.on('getRoomList', () => {
+        const roomList = getRooms();
+        console.log('list', roomList);
+        io.emit('roomList', roomList)
+    });
 
     // listen to chat message from client
     socket.on('chatInput', msg => {
         const user = getUser(socket.id)
         if (user) io.to(user.room).emit('message', formatMessage(`${user.username}`, msg))
     })
+
+
 
     // User left
     socket.on('disconnection', () => {
@@ -103,12 +116,14 @@ const userLeave = (id) => {
 }
 
 const getRoomUsers = (room) => {
-    return users.filter(item => item.room === room).map((item => item.username)).join(',')
+    const roomUsers = users.filter(item => item.room === room)
+    if (roomUsers.length) return roomUsers.map((item => item.username)).join(', ')
+    else return "Seems nobody here... Invite a friend!"
 }
 
 const getRooms = () => {
     const set = new Set(users.map(item => item.room))
-    return Array.from(set).sort()
+    return Array.from(set)
 }
 
 const changeName = (id, newName) => {
