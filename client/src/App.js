@@ -12,7 +12,7 @@ function App() {
   const initialState = { name: "", room: "", roomList: [], messageList: [], }
   const [state, setState] = useState(initialState)
 
-  const ENDPOINT = "http://localhost:5000/";
+  const ENDPOINT = "https://realtimechat-api-nodejs.herokuapp.com/";
 
   useEffect(() => {
 

@@ -41,6 +41,7 @@ io.on('connection', (socket) => {
             }
             if (existingUser.room !== room) {
                 socket.leave(existingUser.room);
+                io.to(existingUser.room).emit('message', formatMessage('', `${existingUser.username} has left!`))
                 changeRoom(socket.id, room);
                 socket.emit('message', formatMessage('', 'Room changed!'));
                 socket.join(existingUser.room);

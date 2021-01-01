@@ -28,6 +28,7 @@ const Join = ({ setState, history }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (input.name === "" || input.room === "") return;
         setState(prev => {
             return {
                 ...prev,
