@@ -27,8 +27,7 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', ({ name, room }) => {
 
-        if (name === '' && room === '') return socket.emit('message', formatMessage('', 'Welcome!'))
-        if (name !== '' && room === '') return socket.emit('message', formatMessage('', `Hi! ${name} `))
+        if (name === '' || room === '') return
 
         const existingUser = getUser(socket.id)
         const currentUsers = getRoomUsers(room)
@@ -45,7 +44,7 @@ io.on('connection', (socket) => {
                 changeRoom(socket.id, room);
                 socket.emit('message', formatMessage('', 'Room changed!'));
                 socket.join(existingUser.room);
-                socket.emit('message', formatMessage('', `Users current in ${existingUser.room}: ${currentUsers}`));
+                socket.emit('message', formatMessage('', `Users in current chat room: ${currentUsers}`));
                 socket.to(existingUser.room).broadcast.emit('message', formatMessage('', `${existingUser.username} joins!`));
             }
             console.log('existing user new info', existingUser)
@@ -53,7 +52,7 @@ io.on('connection', (socket) => {
             const newUser = userJoin(socket.id, name, room)
             console.log('new user', newUser)
             socket.join(newUser.room)
-            socket.emit('message', formatMessage('', `Users current in ${newUser.room}: ${currentUsers}`))
+            socket.emit('message', formatMessage('', `Users in current chat room: ${currentUsers}`))
             socket.to(newUser.room).broadcast.emit('message', formatMessage('', `${newUser.username} joins!`))
         }
     })

@@ -20,6 +20,20 @@ nav {
   padding-left: 1rem;
   padding-top: 0.5rem;
   color: #f4abc4;
+  position: relative;
+}
+
+nav button {
+  background-color: #f4abc4;
+  border: none;
+  color: #060930;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #595b83;
+  border-radius: 1rem;
+  cursor: pointer;
+  position: absolute;
+  right: 1rem;
 }
 
 .side-bar {
@@ -64,6 +78,7 @@ nav {
   padding: 0.2rem 0.5rem;
   border-radius: 1rem;
   color: #060930;
+  font-size: 0.9rem;
 }
 
 .msg-official {
@@ -111,6 +126,7 @@ nav {
   padding: 0.5rem 1rem;
   border: 1px solid #595b83;
   border-radius: 1rem;
+  cursor: pointer;
 }
 .explains {
   background-color: #060930;
